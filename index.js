@@ -1,6 +1,6 @@
 import { ApolloServer, gql, UserInputError } from 'apollo-server';
 import { v4 as uuidv4 } from 'uuid';
-import { persons } from './persons.js'; // like a bd
+import axios from 'axios';
 
 const typeDefs = gql`
     enum YesNo {
@@ -47,7 +47,9 @@ const typeDefs = gql`
 const resolvers = {
     Query: {
         personCount: () => persons.length,
-        allPersons: (root, arg) => {
+        allPersons: async (root, arg) => {
+            const { data: persons } = await axios.get('http://localhost:3000/persons')
+
             if (!arg.phone) return persons
 
             const byPhone = (person) =>
